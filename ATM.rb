@@ -33,13 +33,11 @@ if atm.balance.is_a?(String) || atm.balance.negative?
 end
 
 puts 'Введите последовательно количество купюр через пробел номиналом 5, 10, 50 и 100 у.е. в терминале:'
-kup = gets.list.map(&:to_i)
+kup = gets.split.map(&:to_i)
 five.amount = kup[0]
 ten.amount = kup[1]
 fifty.amount = kup[2]
 hundread.amount = kup[3]
-
-money = [[five.parity, five.amount], [ten.parity, ten.amount], [fifty.parity, fifty.amount], [hundread.parity, hundread.amount]]
 
 while true
   puts "Выберите тип операции:\n1 - узнать баланс\n2 - внести наличные\n3 - снять наличные\n0 - завершить операцию"
@@ -86,16 +84,74 @@ while true
     # Ошибки при вводе суммы на выдачу
     if amount_to_issue % 5 != 0
       puts 'Неверно указанна сумма на выдачу, она должна быть кратна 5.'
+      continue
     elsif amount_to_issue > atm.balance
       puts 'Запрошенная сумма больше суммы на счёте.'
+      continue
     end
 
     # Процесс расчёта купюр
-    i = 0
     while amount_to_issue.positive?
-      amount_to_issue -= vichet(money[i][0], amount_to_issue, money[i][1])
-      i += 1
+      if amount_to_issue % 5 == 0 && atm.balance >= amount_to_issue
+        while amount_to_issue >= 100 && handread.amount > 0
+          d = amount_to_issue / 100
+          while handread.amount - d < 0
+              d -= 1
+          end
+          if handread.amount - d >= 0
+              handread.amount -= d
+              atm.balance -= d * 100
+              amount_to_issue -= d * 100
+          end
+        end
+        while amount_to_issue >= 50 && fifty.amount > 0
+          fx = amount_to_issue / 50
+          while fifty.amount - fx < 0
+              fx -= 1
+          end
+          if fifty.amount - fx >= 0
+              fifty.amount -= fx
+              atm.balance -= fx * 50
+              amount_to_issue -= fx * 50
+          end
+        end
+        while amount_to_issue >= 10 && ten.amount > 0
+          t = amount_to_issue / 10
+          while ten.amount - t < 0
+            t -=1
+          end
+          if ten.amount - t >= 0
+            ten.amount -= t
+            atm.balance -= t * 10
+            amount_to_issue -= t * 10
+          end
+        end
+        while amount_to_issue >= 5 && five.amount > 0
+          f = amount_to_issue / 5
+          while five.amount - f < 0
+            f -= 1
+          end
+          if five.amount - f >= 0
+            five.amount -= f
+            atm.balance -= f * 5
+            amount_to_issue -= f * 5
+          end
+        end
+        if amount_to_issue > 0
+          atm.balance += f * 5
+          atm.balance += t * 10
+          atm.balance += fx * 50
+          atm.balance += d * 100
+          five.amount += f
+          ten.amount += t
+          fifty.amount += fx
+          handread.amount += d
+          puts "В банкомате недостаточно купюр."
+        end
+        puts "Ваш баланс #{atm.balance}."
+      elsif amount_to_issue % 5 == 0 && atm.balance < amount_to_issue
+        puts "На балансе недостаточно средств."
+      end
     end
-
   end
 end
