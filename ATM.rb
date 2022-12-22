@@ -1,15 +1,9 @@
 class ATM
-  # Определяем  переменыне баланса и массив с количеством купюр разного номинала
-
-  attr_accessor :balance, :cash
-
-  def vichet(parity, amount_to_issue, cash_amount)
-    return min(cash_amount, (amount_to_issue.div parity)) * parity
-  end
+  attr_accessor :balance, :cash # Задаем баланс и деньги
 end
 
 class Cash
-  attr_accessor :amount, :parity
+  attr_accessor :amount, :parity # Задаем количество и номинал
 end
 
 five = Cash.new
